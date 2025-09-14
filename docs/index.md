@@ -462,15 +462,28 @@ ER‑диаграмма описывает ключевые сущности и 
   
 #### 4.5. Integration points  
   
-- Описание взаимодействия между сервисами (методы API и др.) `Data Scientist`  
+#### 4.7. Integration points
+
+| Сервис              | Метод       | Endpoint                   | Описание                                                         |
+|--------------------|------------|----------------------------|-----------------------------------------------------------------|
+| КПП (терминал)      | REST       | /api/v1/scan               | Передача фото сотрудника для распознавания                      |
+| База сотрудников    | REST       | /api/v1/employees/{id}     | Получение данных сотрудника и проверка доступа                  |
+| Контроль доступа    | REST       | /api/v1/access             | Разрешение или запрет прохода на основе результата распознавания|
+| Monitoring          | Grafana Loki| /metrics                   | Метрики системы: нагрузка, ошибки, время отклика                |
+| Storage             | S3 API     | /data                      | Хранение моделей и обновлений базы данных сотрудников           |
+ 
   
 #### 4.6. Риски  
   
-- Описание рисков и неопределенностей, которые стоит предусмотреть `Data Scientist`   
+-#### 4.6. Риски
+
+- Низкая точность распознавания при плохом освещении или масках/защитных очках
+- Проблемы с масштабируемостью при увеличении числа сотрудников или проходных
+- Ошибки при обновлении базы данных сотрудников
+- Нарушение законов о защите персональных данных, если данные будут передаваны третьим лицам
+- Необходимость регулярного переобучения модели на новых фотографиях сотрудников
+- Возможные аппаратные сбои на КПП или сервере распознавания
+
   
-> ### Материалы для дополнительного погружения в тему  
-> - [Шаблон ML System Design Doc [EN] от AWS](https://github.com/eugeneyan/ml-design-docs) и [статья](https://eugeneyan.com/writing/ml-design-docs/) с объяснением каждого раздела  
-> - [Верхнеуровневый шаблон ML System Design Doc от Google](https://towardsdatascience.com/the-undeniable-importance-of-design-docs-to-data-scientists-421132561f3c) и [описание общих принципов его заполнения](https://towardsdatascience.com/understanding-design-docs-principles-for-achieving-data-scientists-53e6d5ad6f7e).
-> - [ML Design Template](https://www.mle-interviews.com/ml-design-template) от ML Engineering Interviews  
-> - Статья [Design Documents for ML Models](https://medium.com/people-ai-engineering/design-documents-for-ml-models-bbcd30402ff7) на Medium. Верхнеуровневые рекомендации по содержанию дизайн-документа и объяснение, зачем он вообще нужен  
-> - [Краткий Canvas для ML-проекта от Made with ML](https://madewithml.com/courses/mlops/design/#timeline). Подходит для верхнеуровневого описания идеи, чтобы понять, имеет ли смысл идти дальше.  
+
+
