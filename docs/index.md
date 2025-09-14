@@ -233,10 +233,87 @@ flowchart LR
     - Обучение персонала и чек‑листы по поведению в экстремальных ситуациях
     - Верификация liveness на специально подготовленном наборе данных для улучшения качества
 
-### 4. Внедрение `для production систем, если требуется`    
+### 4. Внедрение     
 
-> Заполнение раздела 4 требуется не для всех дизайн документов. В некоторых случаях результатом итерации может быть расчет каких-то значений, далее используемых в бизнес-процессе для пилота.  
-  
+%% UML Component Diagram: Автоматизированная идентификация личности на проходной
+
+
+graph TB
+    %% Источники данных
+    Camera["Камера видеонаблюдения"]
+    AccessCardReader["Считыватель карт доступа (опционально)"]
+
+```mermaid
+flowchart TB
+    Camera["Камера видеонаблюдения"]
+    EdgeProcessor["Edge-процессор на проходной"]
+    FaceDetection["Модуль детекции лица"]
+    LivenessCheck["Liveness модуль"]
+    Preprocessing["Модуль предобработки изображения"]
+    EmbeddingExtractor["Модуль извлечения эмбеддингов"]
+    APIGateway["API Gateway"]
+    MatchingService["Сервис сравнения с эталонной базой"]
+    EmployeeDB["База эталонных данных сотрудников"]
+    AccessControlSystem["СКУД (система контроля доступа)"]
+    LoggingService["Сервис логирования и аудита"]
+    MonitoringService["Сервис мониторинга"]
+    ModelRegistry["Реестр моделей (MLflow)"]
+    ModelTrainer["Модуль обучения/дообучения модели"]
+    Camera --> EdgeProcessor
+    EdgeProcessor --> FaceDetection
+    FaceDetection --> LivenessCheck
+    LivenessCheck --> Preprocessing
+    Preprocessing --> EmbeddingExtractor
+    EmbeddingExtractor --> APIGateway
+    APIGateway --> MatchingService
+    MatchingService --> EmployeeDB
+    MatchingService --> AccessControlSystem
+    AccessControlSystem --> LoggingService
+    LoggingService --> MonitoringService
+    MatchingService --> LoggingService
+    ModelTrainer --> ModelRegistry
+    ModelRegistry --> MatchingService
+    LoggingService --> ModelTrainer
+```
+```mermaid
+sequenceDiagram
+    participant Person as Сотрудник/Посетитель
+    participant Camera as Камера на проходной
+    participant Edge as Edge‑процессор
+    participant Liveness as Модуль liveness
+    participant Embed as Модуль извлечения эмбеддингов
+    participant API as API Gateway
+    participant Match as Сервис сравнения с базой
+    participant DB as База эталонных данных
+    participant ACS as СКУД
+    participant Log as Логирование/Мониторинг
+
+
+    Person->>Camera: Подходит к турникету
+    Camera->>Edge: Передача видеопотока
+    Edge->>Edge: Детекция лица
+    Edge->>Liveness: Проверка живости
+    Liveness-->>Edge: Результат проверки
+    Edge->>Embed: Предобработка и извлечение эмбеддингов
+    Embed->>API: Отправка векторного представления
+    API->>Match: Запрос на сравнение
+    Match->>DB: Получение эталонных данных
+    DB-->>Match: Эталонные эмбеддинги
+    Match-->>API: Результат сравнения (ID, уверенность)
+    API->>ACS: Передача решения о доступе
+    ACS-->>Person: Открыть/отказать в доступе
+    ACS->>Log: Запись события (ID, фото, время, результат)
+    Match->>Log: Запись метрик и качества
+
+```
+
+
+
+
+
+
+
+
 #### 4.1. Архитектура решения   
   
 - Блок схема и пояснения: сервисы, назначения, методы API `Data Scientist`  
