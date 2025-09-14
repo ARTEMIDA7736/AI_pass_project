@@ -235,14 +235,6 @@ flowchart LR
 
 ### 4. Внедрение     
 
-%% UML Component Diagram: Автоматизированная идентификация личности на проходной
-
-
-graph TB
-    %% Источники данных
-    Camera["Камера видеонаблюдения"]
-    AccessCardReader["Считыватель карт доступа (опционально)"]
-
 ```mermaid
 flowchart TB
     Camera["Камера видеонаблюдения"]
@@ -257,8 +249,8 @@ flowchart TB
     AccessControlSystem["СКУД (система контроля доступа)"]
     LoggingService["Сервис логирования и аудита"]
     MonitoringService["Сервис мониторинга"]
-    ModelRegistry["Реестр моделей (MLflow)"]
-    ModelTrainer["Модуль обучения/дообучения модели"]
+    ModelRegistry["Реестр MLflow"]
+    ModelTrainer["Модуль обучения модели"]
     Camera --> EdgeProcessor
     EdgeProcessor --> FaceDetection
     FaceDetection --> LivenessCheck
